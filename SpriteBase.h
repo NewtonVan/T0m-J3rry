@@ -16,6 +16,7 @@ public:
 	virtual ~SpriteBase();
 
 	virtual void move(rect r)= 0;
+	virtual int ShowHealth();
 	void drawSprite(int width, int height);
 	void drawSprite();
 	rect getRect();

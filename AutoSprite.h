@@ -12,8 +12,10 @@ public:
 	CAutoSprite(CAutoSprite &spt);
 	~CAutoSprite();
 
+	virtual bool Bite(rect ur);
 	void move(rect r);
 	int getScore();
+
 };
 
 #endif

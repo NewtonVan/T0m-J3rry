@@ -41,3 +41,7 @@ rect SpriteBase::getRect()
 	rect rr= {x, y, width, height};
 	return rr;
 }
+int SpriteBase::ShowHealth()
+{
+	return 0;
+}

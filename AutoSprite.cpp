@@ -28,3 +28,8 @@ int CAutoSprite::getScore()
 {
 	return score;
 }
+
+bool CAutoSprite::Bite(rect ur)
+{
+	return false;
+}
