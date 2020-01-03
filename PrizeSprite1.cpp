@@ -16,5 +16,5 @@ CPrizeSprite1::~CPrizeSprite1()
 
 int CPrizeSprite1::Gift(int tp)
 {
-	return tp%3;
+	return 3+(tp%3);
 }

@@ -1,7 +1,7 @@
 #include "UsrSprite.h"
 
 CUsrSprite::CUsrSprite(int x, int y, int width, int height, int dx, int dy, ACL_Image *img, rect r1)
-:SpriteBase(x, y, width, height, dx, dy, img, r1), score(0), health(3), weapon(0), rush(0, 2)
+:SpriteBase(x, y, width, height, dx, dy, img, r1), score(0), health(3), weapon(0), rush(0, 1)
 {
 }
 CUsrSprite::CUsrSprite(CUsrSprite &spt) : SpriteBase(spt)
@@ -21,7 +21,32 @@ void CUsrSprite::GetPrize(int tp)
 	if (tp< 0){
 		return;
 	}
-	if (0== tp){
+	switch(tp){
+		case 0:
+			AddHealth(1);
+			break;
+		case 1:
+			GetWeapon();
+			break;
+		case 2:
+			GetShoes();
+			break;
+		case 3:
+			AddHealth(1);
+			AddHealth(1);
+			break;
+		case 4:
+			GetWeapon();
+			GetWeapon();
+			break;
+		case 5:
+			GetShoes();
+			GetShoes();
+			break;
+		default:
+			break;
+	}
+/*	if (0== tp){
 		AddHealth(1);
 	}
 	else if (1== tp){
@@ -29,7 +54,7 @@ void CUsrSprite::GetPrize(int tp)
 	}
 	else{
 		GetShoes();
-	}
+	}*/
 }
 void CUsrSprite::move(rect r1)
 {
