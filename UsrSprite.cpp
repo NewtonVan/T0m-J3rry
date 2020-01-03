@@ -1,12 +1,7 @@
 #include "UsrSprite.h"
 
-/*CUsrSprite::CUsrSprite(int x, int y, int width, int height, int dx, int dy, ACL_Image *img, rect r1)
-:SpriteBase(x, y, width, height, dx, dy, img, r1)
-{
-
-}*/
 CUsrSprite::CUsrSprite(int x, int y, int width, int height, int dx, int dy, ACL_Image *img, rect r1)
-:SpriteBase(x, y, width, height, dx, dy, img, r1), score(0), health(3), weapon(0, 0), shield(0, 0), rush(0, 2)
+:SpriteBase(x, y, width, height, dx, dy, img, r1), score(0), health(3), weapon(0), rush(0, 2)
 {
 }
 CUsrSprite::CUsrSprite(CUsrSprite &spt) : SpriteBase(spt)
@@ -14,7 +9,6 @@ CUsrSprite::CUsrSprite(CUsrSprite &spt) : SpriteBase(spt)
 	score= spt.score;
 	health= spt.health;
 	weapon= spt.weapon;
-	shield= spt.shield;
 	rush= spt.rush;
 }
 CUsrSprite::~CUsrSprite()
@@ -30,11 +24,8 @@ void CUsrSprite::GetPrize(int tp)
 	if (0== tp){
 		AddHealth(1);
 	}
-	if (1== tp){
+	else if (1== tp){
 		GetWeapon();
-	}
-	else if (2== tp){
-		GetShield();
 	}
 	else{
 		GetShoes();
@@ -117,6 +108,36 @@ void CUsrSprite::RushOff()
 	dx/= 4;
 	dy/= 4;
 }
+void CUsrSprite::UseWeapon(ACL_Image *img, int w, int h, int ddx, int ddy)
+{
+	if (0== weapon.num){
+		return;
+	}
+
+	--weapon.num;
+	CBall *nubl= new CBall(x, y, w, h, ddx, ddy, img, this->r);
+	weapon.tail->SetNext(nubl); 
+	weapon.tail= nubl;
+}
+void CUsrSprite::UseOutWeapon(CBall *wpn)
+{
+	if (NULL== wpn){
+		return;
+	}
+	CBall *fa= weapon.head;
+	while (wpn!= fa->GetNext()){
+		fa= fa->GetNext();
+	}
+	fa->SetNext(wpn->GetNext());
+	weapon.tail= wpn== weapon.tail ? fa : weapon.tail;
+	delete wpn;
+}
+CBall* CUsrSprite::ShowWeaponHead()
+{
+	return weapon.head;
+}
+
+
 int CUsrSprite::ShoeFade()
 {
 	return rush.time> 0 ? --rush.time : -1;
@@ -172,25 +193,13 @@ int CUsrSprite::Equipped()
 {
 	return weapon.num;
 }
-int CUsrSprite::Protected()
+int CUsrSprite::SpeedUp()
 {
-	return shield.num;
+	return rush.shoes;
 }
 int CUsrSprite::GetWeapon()
 {
-	return ++weapon.num;
-}
-int CUsrSprite::LoseWeapon()
-{
-	return --weapon.num;
-}
-int CUsrSprite::GetShield()
-{
-	return ++shield.num;
-}
-int CUsrSprite::LoseShield()
-{
-	return --shield.num;
+	return weapon.num+= 6;
 }
 int  CUsrSprite::GetShoes()
 {

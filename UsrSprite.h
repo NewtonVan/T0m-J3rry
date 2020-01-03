@@ -2,23 +2,22 @@
 #define UsrSprite_h
 
 #include "SpriteBase.h"
+#include "Ball.h"
 
 class CUsrSprite :
 public SpriteBase
 {
 	int score;
 	int health;
-	struct Shield{
-		int times;
-		int num;
-		Shield(){}
-		Shield(int t, int n) : times(t), num(n) {}
-	}shield;
 	struct Weapon{
-		int times;
 		int num;
+		CBall *head, *tail;
 		Weapon(){}
-		Weapon(int t, int n) : times(t), num(n) {}
+		Weapon(int n) : num(n) 
+		{
+			head= new CBall(0, 0, 0, 0, 0, 0, NULL, {0, 0, 0, 0});
+			tail= head;
+		}
 	}weapon;
 	struct Rush{
 		int time;
@@ -36,7 +35,11 @@ public:
 	void move(rect r);
 	void RushOn();
 	void RushOff();
+	void UseWeapon(ACL_Image *img, int w, int h, int ddx, int ddy);
+	void UseOutWeapon(CBall *wpn);
 	
+	CBall* ShowWeaponHead();
+
 	int ShoeFade();
 	int collision(rect r1);
 	int getScore();
@@ -46,12 +49,10 @@ public:
 	int AddHealth(int h);
 	int LoseHealth(int h);
 	int Equipped();
-	int Protected();
+	int SpeedUp();
 	int GetWeapon();
-	int LoseWeapon();
-	int GetShield();
-	int LoseShield();
 	int GetShoes();
+
 };
 
 #endif

@@ -6,9 +6,11 @@
 #include "HistoryBase.h"
 #include "PrizeSprite.h"
 #include "PrizeSprite1.h"
+#include "Ball.h"
 #include <ctime>
 #include <cstdio>
 #include <cstdlib>
+#include <cmath>
 #include <algorithm>
 using namespace std;
 
@@ -20,8 +22,10 @@ CUsrSprite *usr= NULL;
 HistoryBase *record[10+3];
 int autoWidth= 100, autoHeight= 100;
 int usrWidth= 100, usrHeight= 100;
+int ballWidth= 50, ballHeight= 50;
 int nowNum= 0, rk= 0, gdt= 1578239999;
 ACL_Image img, imgUsr, imgHeart, imgEnm, imgGirl, imgButiGirl;
+ACL_Image wpnimg, shieldimg;
 rect winRect;
 
 void CreateData(CAutoSprite **autospt);
@@ -32,6 +36,8 @@ void KeyEvent(int key, int event);
 void GameOver();
 void ReadRecord();
 void WriteRecord();
+void MouseEvent(int mx, int my, int button, int event);
+int Gcd(int a, int b);
 
 int Setup()
 {
@@ -48,11 +54,13 @@ int Setup()
 	loadImage(".\\picture\\dog.bmp", &imgEnm);
 	loadImage(".\\picture\\girl.jpg", &imgGirl);	
 	loadImage(".\\picture\\buti.jpg", &imgButiGirl);
+	loadImage(".\\picture\\weapon.jpg", &wpnimg);
 
 	CreateData(autosprite);
 	CreateData(&usr);
 	registerTimerEvent(TimerEvent);
 	registerKeyboardEvent(KeyEvent);
+	registerMouseEvent(MouseEvent);
 	startTimer(0, 40);
 	startTimer(1, 1000);
 
@@ -110,6 +118,7 @@ void TimerEvent(int id)
 	int i= 0; 
 	switch(id){
 		case 0:
+		{
 			for (i= 0; i< nowNum; ++i){
 				if (autosprite[i]){
 					rect ur= usr->getRect();
@@ -122,18 +131,47 @@ void TimerEvent(int id)
 					autosprite[i]->move(ur);
 				}
 			}
+			CBall* wpn= usr->ShowWeaponHead();
+			wpn= wpn->GetNext();
+			while (NULL!= wpn){
+				rect ur= usr->getRect();
+				wpn->move(ur);
+				for (i= 0; i< nowNum; ++i){
+					if (autosprite[i] && wpn->Collision(autosprite[i]->getRect())){
+						int s= autosprite[i]->getScore();
+						if (usr){
+							usr->addScore(s);
+						}
+						usr->GetPrize(autosprite[i]->Gift(rand()));
+						delete autosprite[i];
+						autosprite[i]= NULL;
+						wpn->LoseHealth();
+					}
+				}
+				if (1> wpn->ShowHealth()){
+					CBall *btmp= wpn->GetNext();
+					usr->UseOutWeapon(wpn);
+					wpn= btmp;
+				}
+				else{
+					wpn= wpn->GetNext();
+				}
+			}
 			if (0== usr->ShoeFade()){
 				usr->RushOff();
 			}
 			break;
+		}
 		case 1:
+		{
 			if (nowNum< maxNum){
 				CreateData(autosprite);
 			}
 			if (0== usr->ShoeFade()){
 				usr->RushOff();
 			}
-			break;
+			break;	
+		}
 		default:
 			break;
 	}
@@ -150,6 +188,12 @@ void Paint()
 		}
 	}
 	if (usr){
+		CBall *wpn= usr->ShowWeaponHead();
+		wpn= wpn->GetNext();
+		while (NULL!= wpn){
+			wpn->drawSprite();
+			wpn= wpn->GetNext();
+		}
 		usr->drawSprite();
 
 		char txt[30];
@@ -165,7 +209,7 @@ void Paint()
 		paintText(10, 35, txt);
 		sprintf(txt, "Weapon: %d", usr->Equipped());
 		paintText(10, 50, txt);
-		sprintf(txt, "Shield: %d", usr->Protected());
+		sprintf(txt, "SpeedUp: %d", usr->SpeedUp());
 		paintText(10, 65, txt);
 	}
 	endPaint();
@@ -188,7 +232,7 @@ void KeyEvent(int key, int event)
 				}
 				usr->GetPrize(autosprite[i]->Gift(rand()));
 				if (0== autosprite[i]->ShowHealth()){	
-					delete(autosprite[i]);
+					delete autosprite[i];
 					autosprite[i]= NULL;
 				}
 			}
@@ -245,4 +289,25 @@ void WriteRecord()
 		fprintf(fp, "%s\t%d\n", record[i]->GetTime(), record[i]->GetScore());
 	}
 	fclose(fp);
+}
+void MouseEvent(int mx, int my, int button, int event)
+{
+	if (BUTTON_DOWN!= event || RIGHT_BUTTON!= button){
+		return;
+	}
+	rect ur= usr->getRect();
+	int dx= mx- ur.x, dy= my- ur.y;
+	if (0== dx && 0== dy){
+		return;
+	}
+	float tmp= sqrt(dx*dx+dy*dy);
+	float ratx= dx/tmp, raty= dy/tmp;
+	dx= 10*ratx;
+	dy= 10*raty;
+
+	usr->UseWeapon(&wpnimg, ballWidth, ballHeight, dx, dy);
+}
+inline int Gcd(int a, int b)
+{
+	return 0== b ? a : Gcd(b, a%b);
 }

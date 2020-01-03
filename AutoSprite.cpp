@@ -15,10 +15,10 @@ CAutoSprite::~CAutoSprite()
 }
 void CAutoSprite::move(rect r1)
 {
-	if (x< 0 || x> (r.width-width)){
+	if (x< r.x || x> (r.x+r.width-width)){
 		dx*= -1;
 	}
-	if (y< 0 || y> (r.height-height)){
+	if (y< r.y || y> (r.y+r.height-height)){
 		dy*= -1;
 	}
 	x+= dx;
