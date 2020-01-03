@@ -30,3 +30,11 @@ Funny Gam3
 # Ea5t3rEgg（彩蛋）
 ***
 加速状态，有概率获得双倍奖励，当然也有概率三倍伤害。。。
+
+# 编译文件方法
+在命令行下打开，且配置好Mingw
+```shell
+gcc -c *.c 
+g++ -c *.cpp 
+g++ *.o -lgdi32 -lole32 -loleaut32 -luuid -lwinmm -lmsimg32 -o sprite.exe
+```
