@@ -6,7 +6,7 @@
 
 class HistoryBase{
 protected:
-	char tm[23];
+	char tme[23];
 	int score;
 public:
 	HistoryBase(char *t, int s);

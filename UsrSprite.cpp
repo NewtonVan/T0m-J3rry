@@ -6,7 +6,7 @@
 
 }*/
 CUsrSprite::CUsrSprite(int x, int y, int width, int height, int dx, int dy, ACL_Image *img, rect r1)
-:SpriteBase(x, y, width, height, dx, dy, img, r1), score(0), health(3), weapon(0, 0), shield(0, 0), rush(0, 2, 0)
+:SpriteBase(x, y, width, height, dx, dy, img, r1), score(0), health(3), weapon(0, 0), shield(0, 0), rush(0, 2)
 {
 }
 CUsrSprite::CUsrSprite(CUsrSprite &spt) : SpriteBase(spt)
@@ -22,6 +22,24 @@ CUsrSprite::~CUsrSprite()
 
 }
 
+void CUsrSprite::GetPrize(int tp)
+{
+	if (tp< 0){
+		return;
+	}
+	if (0== tp){
+		AddHealth(1);
+	}
+	if (1== tp){
+		GetWeapon();
+	}
+	else if (2== tp){
+		GetShield();
+	}
+	else{
+		GetShoes();
+	}
+}
 void CUsrSprite::move(rect r1)
 {
 	x= r1.x;
@@ -83,7 +101,6 @@ void CUsrSprite::RushOn()
 	}
 	else{
 		--rush.shoes;
-		rush.on= 1;
 		if (0== rush.time){
 			dx*= 4;
 			dy*= 4;
@@ -96,7 +113,6 @@ void CUsrSprite::RushOff()
 	if (0< rush.time){
 		return;
 	}
-	rush.on= 0;
 	rush.time= 0;
 	dx/= 4;
 	dy/= 4;
@@ -175,4 +191,8 @@ int CUsrSprite::GetShield()
 int CUsrSprite::LoseShield()
 {
 	return --shield.num;
+}
+int  CUsrSprite::GetShoes()
+{
+	return ++rush.shoes;
 }

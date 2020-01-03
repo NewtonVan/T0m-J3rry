@@ -4,13 +4,15 @@
 #include "AvoidSprite.h"
 #include "EnemySprite.h"
 #include "HistoryBase.h"
+#include "PrizeSprite.h"
+#include "PrizeSprite1.h"
 #include <ctime>
 #include <cstdio>
 #include <cstdlib>
 #include <algorithm>
 using namespace std;
 
-const int maxNum= 1<<6;
+const int maxNum= 1<<7;
 const int winWidth= 800, winHeight= 600;
 
 CAutoSprite *autosprite[maxNum]= {0};
@@ -19,7 +21,7 @@ HistoryBase *record[10+3];
 int autoWidth= 100, autoHeight= 100;
 int usrWidth= 100, usrHeight= 100;
 int nowNum= 0, rk= 0, gdt= 1578239999;
-ACL_Image img, imgUsr, imgHeart, imgEnm;
+ACL_Image img, imgUsr, imgHeart, imgEnm, imgGirl, imgButiGirl;
 rect winRect;
 
 void CreateData(CAutoSprite **autospt);
@@ -44,6 +46,8 @@ int Setup()
 	loadImage(".\\picture\\tom.bmp", &imgUsr);
 	loadImage(".\\picture\\duck.jpg", &imgHeart);
 	loadImage(".\\picture\\dog.bmp", &imgEnm);
+	loadImage(".\\picture\\girl.jpg", &imgGirl);	
+	loadImage(".\\picture\\buti.jpg", &imgButiGirl);
 
 	CreateData(autosprite);
 	CreateData(&usr);
@@ -70,14 +74,20 @@ void CreateData(CAutoSprite **autospt)
 	}
 ;
 	int t= rand()%100;
-	if (t< 70){
+	if (t< 60){
 		autospt[nowNum++]= new CAutoSprite(x, y, autoWidth, autoHeight, dx, dy, &img, winRect, 1);
 	}
-	else if (t< 90){
+	else if (t< 79){
 		autospt[nowNum++]= new CAvoidSprite(x, y, autoWidth, autoHeight, dx, dy, &imgHeart, winRect, 5);
 	}
-	else{
+	else if (t< 90){
 		autospt[nowNum++]= new CEnemySprite(x, y, autoWidth, autoHeight, dx, dy, &imgEnm, winRect, 7);
+	}
+	else if (t< 94){
+		autospt[nowNum++]= new CPrizeSprite(x, y, autoWidth, autoHeight, dx, dy, &imgGirl, winRect, 3);
+	}
+	else{
+		autospt[nowNum++]= new CPrizeSprite1(x, y, autoWidth, autoHeight, dx, dy, &imgButiGirl, winRect, 4);
 	}
 }
 void CreateData(CUsrSprite **usr)
@@ -153,6 +163,10 @@ void Paint()
 		}
 		sprintf(txt, "Helath: %d", usr->ShowHealth());
 		paintText(10, 35, txt);
+		sprintf(txt, "Weapon: %d", usr->Equipped());
+		paintText(10, 50, txt);
+		sprintf(txt, "Shield: %d", usr->Protected());
+		paintText(10, 65, txt);
 	}
 	endPaint();
 }
@@ -172,6 +186,7 @@ void KeyEvent(int key, int event)
 				if (usr){
 					usr->addScore(s);
 				}
+				usr->GetPrize(autosprite[i]->Gift(rand()));
 				if (0== autosprite[i]->ShowHealth()){	
 					delete(autosprite[i]);
 					autosprite[i]= NULL;
@@ -188,7 +203,7 @@ void GameOver()
 }
 void ReadRecord()
 {
-	char tm[23];
+	char ttm[23];
 	int scr;
 	FILE *fp;
 	fp= fopen(".\\History\\rank.txt", "r");
@@ -198,8 +213,8 @@ void ReadRecord()
 	while ('\n'!= fgetc(fp)){
 		continue;
 	}
-	while (EOF!= fscanf(fp, "%s %d", tm, &scr) && rk< 10){
-		record[rk++]= new HistoryBase(tm, scr);
+	while (EOF!= fscanf(fp, "%s %d", ttm, &scr) && rk< 10){
+		record[rk++]= new HistoryBase(ttm, scr);
 	}
 	fclose(fp);
 }
@@ -207,10 +222,10 @@ void WriteRecord()
 {
 	FILE *fp;
 	int scr= usr->getScore(), i= rk, lb= min(rk+1, 10);
-	char tm[23];
+	char ttm[23];
 
-	sprintf(tm, "%d", time(0));
-	record[rk]= new HistoryBase(tm, scr);
+	sprintf(ttm, "%d", time(0));
+	record[rk]= new HistoryBase(ttm, scr);
 	while (i> 0 &&  *record[i-1]< *record[i]){
 		HistoryBase *tmp= record[i];
 		record[i]= record[i-1];
@@ -220,7 +235,7 @@ void WriteRecord()
 
 	fp= fopen(".\\History\\record.txt", "a");
 	fputc('\n', fp);
-	fprintf(fp, "%s\t%d", tm, scr);
+	fprintf(fp, "%s\t%d", ttm, scr);
 	fclose(fp);
 
 	fp= fopen(".\\History\\rank.txt", "w");

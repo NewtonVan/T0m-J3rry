@@ -13,6 +13,7 @@ public:
 	~CAutoSprite();
 
 	virtual bool Bite(rect ur);
+	virtual int Gift(int tp);
 	void move(rect r);
 	int getScore();
 

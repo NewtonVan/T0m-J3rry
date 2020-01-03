@@ -33,3 +33,7 @@ bool CAutoSprite::Bite(rect ur)
 {
 	return false;
 }
+int CAutoSprite::Gift(int tp)
+{
+	return -1;
+}

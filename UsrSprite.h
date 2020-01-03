@@ -23,15 +23,15 @@ public SpriteBase
 	struct Rush{
 		int time;
 		int shoes;
-		int on;
 		Rush(){}
-		Rush(int t, int s, int o) : time(t), shoes(s), on(o) {}
+		Rush(int t, int s) : time(t), shoes(s){}
 	}rush;
 public:
 	CUsrSprite(int x, int y, int width, int height, int dx, int dy, ACL_Image *img, rect r1);
 	CUsrSprite(CUsrSprite &spt);
 	~CUsrSprite();
 
+	void GetPrize(int type);
 	void move(int key);
 	void move(rect r);
 	void RushOn();
@@ -51,6 +51,7 @@ public:
 	int LoseWeapon();
 	int GetShield();
 	int LoseShield();
+	int GetShoes();
 };
 
 #endif

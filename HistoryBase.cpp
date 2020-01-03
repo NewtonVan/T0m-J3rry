@@ -2,22 +2,22 @@
 
 HistoryBase::HistoryBase(char *t, int s) :score(s) 
 {
-	strcpy(tm, t);
+	strcpy(tme, t);
 }
 HistoryBase::HistoryBase(HistoryBase &his) : score(his.score) 
 {
-	strcpy(tm, his.tm);
+	strcpy(tme, his.tme);
 }
 HistoryBase::~HistoryBase()
 {}
 
 char* HistoryBase::GetTime()
 {
-	return tm;
+	return tme;
 }
 char* HistoryBase::SetTime(char *src)
 {
-	return strcpy(tm, src);
+	return strcpy(tme, src);
 }
 
 int HistoryBase::GetScore()
