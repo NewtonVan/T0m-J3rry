@@ -10,7 +10,9 @@
 #include <ctime>
 #include <cstdio>
 #include <cstdlib>
+#include <chrono>
 #include <cmath>
+#include <string>
 #include <algorithm>
 using namespace std;
 
@@ -38,6 +40,7 @@ void ReadRecord();
 void WriteRecord();
 void MouseEvent(int mx, int my, int button, int event);
 int Gcd(int a, int b);
+string GetCurrentSystemTime();
 
 int Setup()
 {
@@ -83,7 +86,7 @@ void CreateData(CAutoSprite **autospt)
 ;
 	int t= rand()%100;
 	if (t< 60){
-		autospt[nowNum++]= new CAutoSprite(x, y, autoWidth, autoHeight, dx, dy, &img, winRect, 1);
+		autospt[nowNum++]= new CAutoSprite(x, y, autoWidth, autoHeight, dx, dy, &img, winRect, 2);
 	}
 	else if (t< 79){
 		autospt[nowNum++]= new CAvoidSprite(x, y, autoWidth, autoHeight, dx, dy, &imgHeart, winRect, 5);
@@ -95,7 +98,7 @@ void CreateData(CAutoSprite **autospt)
 		autospt[nowNum++]= new CPrizeSprite(x, y, autoWidth, autoHeight, dx, dy, &imgGirl, winRect, 3);
 	}
 	else{
-		autospt[nowNum++]= new CPrizeSprite1(x, y, autoWidth, autoHeight, dx, dy, &imgButiGirl, winRect, 4);
+		autospt[nowNum++]= new CPrizeSprite1(x, y, autoWidth, autoHeight, dx, dy, &imgButiGirl, winRect, 2);
 	}
 }
 void CreateData(CUsrSprite **usr)
@@ -247,7 +250,7 @@ void GameOver()
 }
 void ReadRecord()
 {
-	char ttm[23];
+	char ttm[73];
 	int scr;
 	FILE *fp;
 	fp= fopen(".\\History\\rank.txt", "r");
@@ -266,9 +269,9 @@ void WriteRecord()
 {
 	FILE *fp;
 	int scr= usr->getScore(), i= rk, lb= min(rk+1, 10);
-	char ttm[23];
-
-	sprintf(ttm, "%d", time(0));
+	char ttm[73];
+	string buf= GetCurrentSystemTime();
+	sprintf(ttm, "%s", buf.c_str());
 	record[rk]= new HistoryBase(ttm, scr);
 	while (i> 0 &&  *record[i-1]< *record[i]){
 		HistoryBase *tmp= record[i];
@@ -284,7 +287,7 @@ void WriteRecord()
 
 	fp= fopen(".\\History\\rank.txt", "w");
 	fprintf(fp, "Top 10 Rank:\n");
-	fprintf(fp, "Time\t\tScore\n");
+	fprintf(fp, "Time\t\t\tScore\n");
 	for (i= 0; i< lb; ++i){
 		fprintf(fp, "%s\t%d\n", record[i]->GetTime(), record[i]->GetScore());
 	}
@@ -310,4 +313,15 @@ void MouseEvent(int mx, int my, int button, int event)
 inline int Gcd(int a, int b)
 {
 	return 0== b ? a : Gcd(b, a%b);
+}
+string GetCurrentSystemTime()
+{
+	auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	struct tm* ptm = localtime(&tt);
+	char date[60] = {0};
+	sprintf(date, "%d-%02d-%02d@%02d:%02d:%02d",
+		(int)ptm->tm_year + 1900,(int)ptm->tm_mon + 1,(int)ptm->tm_mday,
+		(int)ptm->tm_hour,(int)ptm->tm_min,(int)ptm->tm_sec);
+
+	return std::string(date);	
 }

@@ -50,8 +50,8 @@ public:
 	int LoseHealth(int h);
 	int Equipped();
 	int SpeedUp();
-	int GetWeapon();
-	int GetShoes();
+	int GetWeapon(int wpn);
+	int GetShoes(int s);
 
 };
 

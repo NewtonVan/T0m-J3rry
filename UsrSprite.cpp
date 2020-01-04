@@ -26,22 +26,19 @@ void CUsrSprite::GetPrize(int tp)
 			AddHealth(1);
 			break;
 		case 1:
-			GetWeapon();
+			GetWeapon(1);
 			break;
 		case 2:
-			GetShoes();
+			GetShoes(1);
 			break;
 		case 3:
-			AddHealth(1);
-			AddHealth(1);
+			AddHealth(2);
 			break;
 		case 4:
-			GetWeapon();
-			GetWeapon();
+			GetWeapon(2);
 			break;
 		case 5:
-			GetShoes();
-			GetShoes();
+			GetShoes(2);
 			break;
 		default:
 			break;
@@ -222,11 +219,11 @@ int CUsrSprite::SpeedUp()
 {
 	return rush.shoes;
 }
-int CUsrSprite::GetWeapon()
+int CUsrSprite::GetWeapon(int wpn)
 {
-	return weapon.num+= 6;
+	return weapon.num+= 6*wpn;
 }
-int  CUsrSprite::GetShoes()
+int  CUsrSprite::GetShoes(int s)
 {
-	return ++rush.shoes;
+	return rush.shoes+= s;
 }
