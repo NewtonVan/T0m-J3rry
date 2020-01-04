@@ -16,7 +16,7 @@
 #include <algorithm>
 using namespace std;
 
-const int maxNum= 1<<7;
+const int maxNum= 1<<8;
 const int winWidth= 800, winHeight= 600;
 
 CAutoSprite *autosprite[maxNum]= {0};
@@ -28,6 +28,7 @@ int ballWidth= 50, ballHeight= 50;
 int nowNum= 0, rk= 0, gdt= 1578239999;
 ACL_Image img, imgUsr, imgHeart, imgEnm, imgGirl, imgButiGirl;
 ACL_Image wpnimg, shieldimg;
+ACL_Sound BGMsound;
 rect winRect;
 
 void CreateData(CAutoSprite **autospt);
@@ -59,8 +60,11 @@ int Setup()
 	loadImage(".\\picture\\buti.jpg", &imgButiGirl);
 	loadImage(".\\picture\\weapon.jpg", &wpnimg);
 
+	loadSound(".\\music\\BGM.mp3", &BGMsound);
+
 	CreateData(autosprite);
 	CreateData(&usr);
+	playSound(BGMsound, 1);
 	registerTimerEvent(TimerEvent);
 	registerKeyboardEvent(KeyEvent);
 	registerMouseEvent(MouseEvent);
@@ -95,10 +99,10 @@ void CreateData(CAutoSprite **autospt)
 		autospt[nowNum++]= new CEnemySprite(x, y, autoWidth, autoHeight, dx, dy, &imgEnm, winRect, 7);
 	}
 	else if (t< 94){
-		autospt[nowNum++]= new CPrizeSprite(x, y, autoWidth, autoHeight, dx, dy, &imgGirl, winRect, 3);
+		autospt[nowNum++]= new CPrizeSprite(x, y, autoWidth, autoHeight, dx, dy, &imgGirl, winRect, 2);
 	}
 	else{
-		autospt[nowNum++]= new CPrizeSprite1(x, y, autoWidth, autoHeight, dx, dy, &imgButiGirl, winRect, 2);
+		autospt[nowNum++]= new CPrizeSprite1(x, y, autoWidth, autoHeight, dx, dy, &imgButiGirl, winRect, 1);
 	}
 }
 void CreateData(CUsrSprite **usr)
@@ -245,6 +249,7 @@ void KeyEvent(int key, int event)
 }
 void GameOver()
 {
+	stopSound(BGMsound);
 	WriteRecord();
 	exit(0);
 }
