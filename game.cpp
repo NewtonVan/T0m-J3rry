@@ -203,7 +203,7 @@ void Paint()
 		}
 		usr->drawSprite();
 
-		char txt[30];
+		char txt[50];
 		setTextSize(16);
 		sprintf(txt, "Score Record: %d", record[0]->GetScore());
 		paintText(10, 5, txt);
@@ -218,6 +218,8 @@ void Paint()
 		paintText(10, 50, txt);
 		sprintf(txt, "SpeedUp: %d", usr->SpeedUp());
 		paintText(10, 65, txt);
+		sprintf(txt, "Time: %s", GetCurrentSystemTime().c_str());
+		paintText(10, 80, txt);
 	}
 	endPaint();
 }
